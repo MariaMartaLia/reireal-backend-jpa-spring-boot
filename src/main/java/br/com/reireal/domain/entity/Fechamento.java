@@ -3,27 +3,27 @@ package br.com.reireal.domain.entity;
 import java.math.BigDecimal;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import org.hibernate.annotations.UuidGenerator;
 
+import br.com.reireal.domain.enums.StatusPagamento;
+import br.com.reireal.domain.enums.StatusPedido;
+import br.com.reireal.domain.enums.TipoPagamento;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "Fechamento")
+@Table(name = "fechamento")
 public class Fechamento {
     @Id
     @GeneratedValue
     @UuidGenerator
     private UUID id;
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private LocalDateTime dataFechamento;
 
     @Column(nullable = false)
@@ -47,15 +47,10 @@ public class Fechamento {
     @Column(nullable = false)
     private BigDecimal totalGeral;
     
-   @OneToMany(mappedBy = "fechamento")
-    private List<Pagamento> pagamentos;
-    
-    @OneToMany
-    private List<Pedido> pedidosCreditoUtilizados;  
-
-public Fechamento(){
-    
  
+    
+
+public Fechamento() {
     this.dataFechamento = LocalDateTime.now();
     this.totalDinheiro =  BigDecimal.ZERO;
     this.totalCartaoCredito =  BigDecimal.ZERO;
@@ -64,49 +59,44 @@ public Fechamento(){
     this.creditoGerado = BigDecimal.ZERO;
     this.creditoUtilizado = BigDecimal.ZERO;
     this.totalGeral =  BigDecimal.ZERO;
-    this.pagamentos = new ArrayList<>();
-    this.pedidosCreditoUtilizados = new ArrayList<>();
+   
 }
-public UUID getId(){
+public UUID getId() {
     return id;
 }
-public LocalDateTime getDataFechamento(){
+public LocalDateTime getDataFechamento() {
     return dataFechamento;
 }
-public BigDecimal getTotalDinheiro(){
+public BigDecimal getTotalDinheiro() {
     return totalDinheiro;
 }
-public BigDecimal getTotalCartaoCredito(){
+public BigDecimal getTotalCartaoCredito() {
     return totalCartaoCredito;
 }
-public BigDecimal getTotalCartaoDebito(){
+public BigDecimal getTotalCartaoDebito() {
     return totalCartaoDebito;
 }
-public BigDecimal getTotalPix(){
+public BigDecimal getTotalPix() {
     return totalPix;
 }
-public BigDecimal getCreditoGerado(){
+public BigDecimal getCreditoGerado() {
     return creditoGerado;
 }
-public BigDecimal getCreditoUtilizado(){
+public BigDecimal getCreditoUtilizado() {
     return creditoUtilizado;
 }
-public BigDecimal getTotalGeral(){
+public BigDecimal getTotalGeral() {
     return totalGeral;
 }
-public List<Pagamento> getPagamentos() {
-    return List.copyOf(pagamentos);
-}
 
-public List<Pedido> getPedidosCreditoUtilizados() {
-    return List.copyOf(pedidosCreditoUtilizados);
-}
 
 public void adicionarPagamento(Pagamento pagamento){
     validarPagamento(pagamento);
     Pedido pedido = pagamento.getPedido();
-    if( pedido.getStatus() != StatusPedido.ENTREGUE){
-        throw new IllegalStateException("Pagamento so pode entrar no fechamento quando Status ENTREGUE");
+    if( pedido.getStatus() != StatusPedido.ENTREGUE)  {
+        throw new IllegalStateException(
+            "Somente pagamentos de pedidos entregues podem ser incluídos no fechamento."
+        );
     }
    TipoPagamento tipo  = pagamento.getTipo();
    switch (tipo) {
@@ -124,53 +114,73 @@ public void adicionarPagamento(Pagamento pagamento){
         break;  
     default:
         throw new IllegalArgumentException(
-        "Tipo de pagamento não reconhecido.");
+        "Tipo de pagamento não reconhecido."
+    );
         }
       totalGeral = totalGeral.add(pagamento.getValor());
-      pagamentos.add(pagamento);
+     
 }
-  public void adicionarCredito(Pagamento pagamento){
+  public void adicionarCredito(Pagamento pagamento) {
     validarPagamento(pagamento);
     Pedido pedido = pagamento.getPedido();
    
     if(pedido.getStatus() == StatusPedido.ENTREGUE || pagamento.getStatus() != StatusPagamento.PAGAMENTO_APROVADO ){
-        throw new IllegalStateException("Pedido não pode ser creditado pois foi entregue ou pagamento não foi aprovado.");
+        throw new IllegalStateException(
+            "Pedido não pode ser creditado pois foi entregue ou pagamento não foi aprovado."
+        );
     }
      Cliente cliente= pedido.getCliente();
      cliente.adicionarCreditoCliente( pagamento.getValor());
      creditoGerado = creditoGerado.add(pagamento.getValor());
-     pagamentos.add(pagamento);
+    
      
    }
-   public void utilizarCredito(Pedido pedido){
+   public void utilizarCredito(Pedido pedido) {
     validarUtilizarCredito(pedido);
     Cliente cliente = pedido.getCliente();
     cliente.utilizarCredito(pedido.getTotal());
     creditoUtilizado = creditoUtilizado.add(pedido.getTotal());
-    pedidosCreditoUtilizados.add(pedido);
+   
    }
-private void validarPagamento(Pagamento pagamento){
-    if(pagamento == null){
-        throw new IllegalArgumentException("Pagamento não pode ser nulo.");
-    }
-
-    if (pagamentos.contains(pagamento)) {
-        throw new IllegalStateException(
-            "Pagamento já registrado no fechamento."
-        );
-    }
+private void validarPagamento(Pagamento pagamento) {
+if (pagamento == null) {
+    throw new IllegalArgumentException(
+        "Pagamento não pode ser nulo."
+    );
 }
-private void validarUtilizarCredito(Pedido pedido){
+
+if (pagamento.getValor() == null) {
+    throw new IllegalArgumentException(
+        "Valor do pagamento não pode ser nulo."
+    );
+}
+
+if (pagamento.getTipo() == null) {
+    throw new IllegalArgumentException(
+        "Tipo de pagamento não pode ser nulo."
+    );
+}
+
+if (pagamento.getPedido() == null) {
+    throw new IllegalArgumentException(
+        "Pagamento deve possuir um pedido."
+    );
+}
+}
+private void validarUtilizarCredito(Pedido pedido) {
       if (pedido == null) {
         throw new IllegalArgumentException(
             "Pedido não pode ser nulo."
         );
     }
-        if(pedidosCreditoUtilizados.contains(pedido)){
-        throw new IllegalStateException("Crédito já utilizado.");
-      }
-    
+   
     Cliente cliente = pedido.getCliente();
+
+    if (cliente == null) {
+    throw new IllegalArgumentException(
+        "Pedido deve possuir um cliente."
+    );
+}
 
     if (pedido.getTotal() == null) {
         throw new IllegalArgumentException(
@@ -179,7 +189,9 @@ private void validarUtilizarCredito(Pedido pedido){
     }
 
     if (pedido.getTotal().compareTo(cliente.getCredito()) > 0) {
-        throw new IllegalStateException("O cliente não possui crédito suficiente para pagar o pedido.");
+        throw new IllegalStateException(
+            "O cliente não possui crédito suficiente para pagar o pedido."
+        );
     }}}
 
 

@@ -1,0 +1,11 @@
+package br.com.reireal.repository;
+
+import java.util.UUID;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import br.com.reireal.domain.entity.Fechamento;
+
+public interface FechamentoRepository extends JpaRepository<Fechamento, UUID>{
+
+}
