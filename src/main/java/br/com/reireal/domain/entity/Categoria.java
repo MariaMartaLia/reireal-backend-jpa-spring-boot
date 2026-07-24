@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.hibernate.annotations.UuidGenerator;
 
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -64,9 +65,10 @@ public void ativarCategoria() {
 }
 private void validarNome(String nome) {
     if (nome == null || nome.isBlank()) {
-        throw new IllegalArgumentException(
-            "O nome da categoria é obrigatório."
-        );
+            throw new IllegalStateException(
+                 "O nome da categoria é obrigatório."
+         );
     }
 }
+
 }

@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import br.com.reireal.domain.entity.Categoria;
 
 public interface CategoriaRepository extends JpaRepository<Categoria,  UUID> {
+    boolean existsByNome(String nome);
+    boolean existsByNomeAndIdNot(String nome, UUID id);
 
 }
 
