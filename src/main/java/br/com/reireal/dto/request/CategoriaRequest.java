@@ -1,6 +1,8 @@
 package br.com.reireal.dto.request;
 
 
+import java.util.UUID;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
@@ -17,6 +19,9 @@ public class CategoriaRequest {
     public CategoriaRequest(String nome) {
     this.nome = nome;
 
+    }
+    public UUID getId() {
+        return UUID.randomUUID();
     }
     public String getNome() {
         return nome;

@@ -7,5 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import br.com.reireal.domain.entity.Cliente;
 
 public interface ClienteRepository extends JpaRepository<Cliente, UUID> {
+    boolean existsByEmail(String email);
 
 }

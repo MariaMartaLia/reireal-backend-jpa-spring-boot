@@ -8,6 +8,9 @@ public class CategoriaResponse {
     private String nome;
     private boolean ativo;
 
+
+    public CategoriaResponse(){}
+
     public CategoriaResponse(UUID id, String nome, boolean ativo) {
 
         this.id = id;

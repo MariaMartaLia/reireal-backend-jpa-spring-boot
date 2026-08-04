@@ -10,6 +10,7 @@
   import br.com.reireal.dto.request.CategoriaRequest;
   import br.com.reireal.dto.response.CategoriaResponse;
   import br.com.reireal.repository.CategoriaRepository;
+  import jakarta.persistence.EntityNotFoundException;
 
   @Service
   @Transactional
@@ -56,7 +57,8 @@
   }
   private Categoria buscar(UUID id) {
     return repository.findById(id)
-          .orElseThrow();
+          .orElseThrow(() ->
+    new EntityNotFoundException("Categoria não encontrada."));
   }
   private void validar(CategoriaRequest request) {
     if(repository.existsByNome(request.getNome())){
@@ -65,10 +67,8 @@
 
   }
   private void validarAtualizacao(UUID id, CategoriaRequest request) {
-    if(repository.existsByNomeAndIdNot(request, id)){
+    if(repository.existsByNomeAndIdNot(request.getNome(), id)){
       throw new IllegalStateException("Já existe categoria com esse nome.");
-    }
-  }
-
-
-  }
+     }
+   }
+ }
