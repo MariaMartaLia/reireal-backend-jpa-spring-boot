@@ -50,10 +50,14 @@
     repository.delete(categoria);
   }
   private Categoria toEntity(CategoriaRequest request) {
-    return new Categoria(request.getNome());
+    return new Categoria(
+      request.getNome());
   }
   private CategoriaResponse toResponse(Categoria categoria) {
-    return new CategoriaResponse(categoria.getId(), categoria.getNome(), categoria.isAtivo());
+    return new CategoriaResponse(
+      categoria.getId(),
+      categoria.getNome(),
+      categoria.isAtivo());
   }
   private Categoria buscar(UUID id) {
     return repository.findById(id)

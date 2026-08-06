@@ -125,6 +125,10 @@ public class Produto {
 
         this.ativo = false;
     }
+    public void alterarEstoque(Integer estoque) {
+    validarQuantidade(estoque);
+    this.estoque = estoque;
+}
 
     private void validarNome(String nome) {
         if (nome == null

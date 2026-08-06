@@ -3,9 +3,12 @@ package br.com.reireal.dto.request;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-import jakarta.validation.constraints.DecimalMin;
+
+
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
 public class ProdutoRequest {
@@ -13,9 +16,10 @@ public class ProdutoRequest {
     @Size(max = 100, min = 3)
     private String nome;
     @NotNull
-    @DecimalMin("0.01")
+    @Positive
     private BigDecimal valorUnitario;
     @NotNull
+    @Min(0)
     private Integer estoque;
     @NotNull
     private UUID categoriaId;
@@ -54,4 +58,5 @@ public void setValorUnitario(BigDecimal valorUnitario) {
  public void setCategoriaId (UUID categoriaId) {
     this.categoriaId = categoriaId;
  }
+
 }
