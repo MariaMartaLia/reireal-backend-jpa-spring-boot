@@ -29,7 +29,7 @@ public class ProdutoService {
         validar(request);
 
         Produto produto = toEntity(request);
-        produtoRepository.save(produto);
+        produto = produtoRepository.save(produto);
 
         return toResponse(produto);
     }

@@ -77,20 +77,7 @@ public Pedido (Cliente cliente ) {
     return cliente;
    }
 
-   private void validarCliente(Cliente cliente) {
-        if(cliente == null){
-        throw new IllegalArgumentException(
-            "Pedido não pode ser feito sem um cliente!"
-        );
-    } 
-}
-private void validarItemPedido(ItemPedido itemPedido) {
-    if(itemPedido ==null){
-        throw new IllegalArgumentException( 
-            "ItemPedido não pode ser nulo"
-        );
-    }
-}
+
 public void adicionarItem(ItemPedido itemPedido) { 
 
     validarItemPedido(itemPedido);
@@ -172,4 +159,28 @@ public void cancelarPedido(){
     }
     status = StatusPedido.CANCELADO;
 }
+public void substituirItens(List<ItemPedido> novosItens) {
+
+    itens.clear();
+
+    for (ItemPedido itemPedido : novosItens) {
+        adicionarItem(itemPedido);
+    }
+}
+
+   private void validarCliente(Cliente cliente) {
+        if(cliente == null){
+        throw new IllegalArgumentException(
+            "Pedido não pode ser feito sem um cliente!"
+        );
+    } 
+}
+private void validarItemPedido(ItemPedido itemPedido) {
+    if(itemPedido ==null){
+        throw new IllegalArgumentException( 
+            "ItemPedido não pode ser nulo"
+        );
+    }
+}
+
 }  
