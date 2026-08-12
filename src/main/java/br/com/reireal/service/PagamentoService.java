@@ -1,3 +1,5 @@
+package br.com.reireal.service;
+
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
@@ -23,39 +25,6 @@ public class PagamentoService {
             PedidoRepository pedidoRepository) {
         this.pagamentoRepository = pagamentoRepository;
         this.pedidoRepository = pedidoRepository;
-    }
-
-    private Pagamento toEntity(PagamentoRequest pagamentoRequest) {
-
-        UUID pedidoId = pagamentoRequest.getPedidoId();
-
-        Pedido pedido = pedidoRepository.findById(pedidoId)
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "Pedido não encontrado."
-                ));
-
-        TipoPagamento tipo = pagamentoRequest.getTipo();
-        BigDecimal valor = pedido.getTotal();
-
-        Pagamento pagamento = new Pagamento(
-                tipo,
-                valor,
-                pedido
-        );
-
-        return pagamento;
-    }
-
-    private PagamentoResponse toResponse(Pagamento pagamento) {
-
-        return new PagamentoResponse(
-                pagamento.getId(),
-                pagamento.getTipo(),
-                pagamento.getValor(),
-                pagamento.getDataPagamento(),
-                pagamento.getStatus(),
-                pagamento.getPedido().getId()
-        );
     }
 
     public PagamentoResponse cadastrar(PagamentoRequest pagamentoRequest) {
@@ -118,5 +87,38 @@ public class PagamentoService {
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Pagamento não foi encontrado."
                 ));
+    }
+
+        private Pagamento toEntity(PagamentoRequest pagamentoRequest) {
+
+        UUID pedidoId = pagamentoRequest.getPedidoId();
+
+        Pedido pedido = pedidoRepository.findById(pedidoId)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Pedido não encontrado."
+                ));
+
+        TipoPagamento tipo = pagamentoRequest.getTipo();
+        BigDecimal valor = pedido.getTotal();
+
+        Pagamento pagamento = new Pagamento(
+                tipo,
+                valor,
+                pedido
+        );
+
+        return pagamento;
+    }
+
+    private PagamentoResponse toResponse(Pagamento pagamento) {
+
+        return new PagamentoResponse(
+                pagamento.getId(),
+                pagamento.getTipo(),
+                pagamento.getValor(),
+                pagamento.getDataPagamento(),
+                pagamento.getStatus(),
+                pagamento.getPedido().getId()
+        );
     }
 }

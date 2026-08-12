@@ -1,11 +1,13 @@
 package br.com.reireal.service;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
 import br.com.reireal.domain.entity.Categoria;
+
 import br.com.reireal.domain.entity.Produto;
 import br.com.reireal.dto.request.ProdutoRequest;
 import br.com.reireal.dto.response.ProdutoResponse;
@@ -48,6 +50,14 @@ public class ProdutoService {
         produtoRepository.save(produto);
 
         return toResponse(produto);
+    }
+       public List<ProdutoResponse> listar() {
+
+        List<Produto> produtos = produtoRepository.findAll();
+
+        return produtos.stream()
+                .map(this::toResponse)
+                .toList();
     }
 
     public void excluir(UUID id) {
